@@ -10,7 +10,7 @@ from torch.distributions import Categorical
 
 
 class ActorCritic(nn.Module):
-    def __init__(self, obs_dim):
+    def __init__(self, obs_dim: int):
         super().__init__()
 
         self.fc1 = nn.Linear(obs_dim, 256)
