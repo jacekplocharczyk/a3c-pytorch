@@ -6,8 +6,7 @@ from a3c_pytorch.common.basic_memory import Memory
 from a3c_pytorch.common.basic_logs import StatsLogger
 
 
-ENV_NAME = "CartPole-v0"
-OBS_DIM = 4
+ENV_NAME = "Pendulum-v0"
 ROLLOUTS = 5000
 GAMMA = 0.99
 LR = 3e-3
@@ -18,7 +17,11 @@ REWARD_DONE = 190.0
 
 def main():
     env = gym.make(ENV_NAME)
-    model = ActorCritic(OBS_DIM)
+    discrete = isinstance(env.action_space, gym.spaces.Discrete)
+    ob_dim = env.observation_space.shape[0]
+    ac_dim = env.action_space.n if discrete else env.action_space.shape[0]
+
+    model = ActorCritic(ob_dim, ac_dim, discrete)
     optimizer = torch.optim.Adam(model.parameters(), lr=LR)
     logger = StatsLogger()
 
@@ -46,7 +49,7 @@ def perform_rollout(env: gym.Env, model: torch.nn.Module, gamma: float) -> Memor
         obs = torch.unsqueeze(torch.FloatTensor(obs), dim=0)
         action, action_logprobs, state_value = model.act(obs)
 
-        obs, rew, done, _ = env.step(int(action))
+        obs, rew, done, _ = env.step(action)
 
         memory.update_actions(action)
         memory.update_action_logprobs(action_logprobs)
@@ -75,6 +78,7 @@ def update_model(
         advantage = returns - state_values
 
         critic_loss = 0.5 * advantage.pow(2).mean()
+
         actor_loss = (-action_logprobs * advantage).mean()
 
         cumulated_loss = actor_loss + critic_loss

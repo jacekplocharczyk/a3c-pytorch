@@ -69,7 +69,7 @@ class Memory:
         return MemoryBatch(self, start, end)
 
     def get_summary_reward(self):
-        return sum(self.rewards) / sum(self.is_terminals)
+        return float(self.rewards.sum()) / float(self.is_terminals.sum())
 
 
 class MemoryBatch:
