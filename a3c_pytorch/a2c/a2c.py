@@ -10,7 +10,7 @@ ENV_NAME = "Pendulum-v0"
 ROLLOUTS = 5000
 GAMMA = 0.99
 LR = 3e-3
-STATS_FREQ = 100
+STATS_FREQ = 50
 BATCH_SIZE = 128
 REWARD_DONE = 190.0
 
@@ -48,6 +48,7 @@ def perform_rollout(env: gym.Env, model: torch.nn.Module, gamma: float) -> Memor
     while not done:
         obs = torch.unsqueeze(torch.FloatTensor(obs), dim=0)
         action, action_logprobs, state_value = model.act(obs)
+        #print(action)
 
         obs, rew, done, _ = env.step(action)
 
@@ -56,7 +57,6 @@ def perform_rollout(env: gym.Env, model: torch.nn.Module, gamma: float) -> Memor
         memory.update_state_values(state_value)
         memory.update_rewards(torch.tensor(rew))
         memory.update_is_terminals(torch.tensor(done, dtype=torch.uint8))
-
     return memory
 
 
