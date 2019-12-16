@@ -24,7 +24,7 @@ class Memory:
         if memory_variable is None:
             return value
         else:
-            return torch.cat([memory_variable, value])
+            return torch.cat([memory_variable, value])  # WARN: cat loses grad_fn!
 
     def update_actions(self, value: torch.tensor):
         self.actions.append(value)
@@ -69,7 +69,8 @@ class Memory:
         return MemoryBatch(self, start, end)
 
     def get_summary_reward(self):
-        return float(self.rewards.sum()) / float(self.is_terminals.sum())
+
+        return float(self.rewards.sum()) / float(sum(self.is_terminals))
 
 
 class MemoryBatch:
