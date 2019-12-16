@@ -37,7 +37,7 @@ class ActorCritic(nn.Module):
         action = dist.sample()
         action_logprobs = dist.log_prob(torch.squeeze(action))
 
-        return action, action_logprobs, state_value
+        return action, action_logprobs, state_value  # TODO: squeeze state_value
 
     def two_heads_return(self, obs) -> Tuple[torch.tensor, torch.tensor]:
         forward = self.forward(obs)
