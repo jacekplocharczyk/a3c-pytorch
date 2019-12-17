@@ -75,7 +75,7 @@ def update_model(
         advantage = returns - state_values
 
         critic_loss = 0.5 * advantage.pow(2).mean()
-        actor_loss = (-action_logprobs * advantage).mean()
+        actor_loss = (-action_logprobs * advantage.detach()).mean()
 
         cumulated_loss = actor_loss + critic_loss
 
