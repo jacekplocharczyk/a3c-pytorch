@@ -10,12 +10,8 @@ ENV_NAME = "Pendulum-v0"
 ROLLOUTS = 5000
 GAMMA = 0.99
 LR = 3e-3
-<<<<<<< HEAD
 STATS_FREQ = 50
-=======
-STATS_FREQ = 100
 TENSORBOARD_FREQ = 10
->>>>>>> origin/master
 BATCH_SIZE = 128
 REWARD_DONE = 190.0
 
