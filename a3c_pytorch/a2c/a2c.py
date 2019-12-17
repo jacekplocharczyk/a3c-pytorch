@@ -1,21 +1,27 @@
-import torch
 import gym
+import torch
 
-from a3c_pytorch.common.basic_model import ActorCritic
-from a3c_pytorch.common.basic_memory import Memory
 from a3c_pytorch.common.basic_logs import StatsLogger
-
+from a3c_pytorch.common.basic_memory import Memory
+from a3c_pytorch.common.basic_model import ActorCritic
+from a3c_pytorch.common.writer import TensorboardWriter
 
 ENV_NAME = "Pendulum-v0"
 ROLLOUTS = 5000
 GAMMA = 0.99
 LR = 3e-3
+<<<<<<< HEAD
 STATS_FREQ = 50
+=======
+STATS_FREQ = 100
+TENSORBOARD_FREQ = 10
+>>>>>>> origin/master
 BATCH_SIZE = 128
 REWARD_DONE = 190.0
 
 
 def main():
+    writer = TensorboardWriter("cpu", lr=LR, comment=f"_{ENV_NAME}")
     env = gym.make(ENV_NAME)
     discrete = isinstance(env.action_space, gym.spaces.Discrete)
     ob_dim = env.observation_space.shape[0]
@@ -31,6 +37,9 @@ def main():
         model = update_model(model, optimizer, memory)
 
         running_reward = logger.get_running_reward(memory)
+
+        if not i % TENSORBOARD_FREQ:
+            writer.rollout_stats(memory, i)
 
         if not i % STATS_FREQ:
             logger.rollout_stats(memory, i)
@@ -79,7 +88,7 @@ def update_model(
 
         critic_loss = 0.5 * advantage.pow(2).mean()
 
-        actor_loss = (-action_logprobs * advantage).mean()
+        actor_loss = (-action_logprobs * advantage.detach()).mean()
 
         cumulated_loss = actor_loss + critic_loss
 
