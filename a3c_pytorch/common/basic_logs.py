@@ -32,3 +32,6 @@ class StatsLogger:
             f"Task finished at {rollout} rollout. "
             f"Running reward is {self.running_reward}"
         )
+
+    def get_rollout_stats(self, memory: Memory, rollout: int) -> list:
+        return [rollout, self.running_reward]
